@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <section
+      class="max-w-rounded-md shadow-lg max-w-5xl p-4 mx-auto felx justify-center bg-gray-200 my-12"
+    >
+      <h1 class="font-bold text-3xl text-red-600 text-center">
+        TO-DO LIST APP
+      </h1>
+      <form id="taskform">
+        <input
+          type="text"
+          id="taskinput"
+          placeholder="Enter a Task"
+          class="w-full border-2 border-black bg-white p-3 rounded-md my-1"
+        />
+        <button
+          type="submit"
+          class="bg-orange-500 text-white px-4 py-2 rounded-md"
+        >
+          Add task
+        </button>
+        <ul id="tasklist" class="space-y-2 my-3"></ul>
+      </form>
+      <!----edit modal------->
+      <div
+        id="editModal"
+        class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center"
+      >
+        <div class="bg-white w-72 p-4 rounded-md">
+          <input
+            type="text"
+            id="editInput"
+            placeholder="update task"
+            class="w-full border-2 border-gray-200 rounded-md my-1"
+          />
+          <div class="flex justify-between">
+            <button id="cancelbtn" class="bg-red-500 text-white px-2 py-1">
+              cancel
+            </button>
+            <button id="savebtn" class="bg-green-400 text-white px-2 py-1">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      tasks = [
+        "🧹 Clean the room",
+        "🧠 Study JavaScript",
+        "🛠 Work on To-Do List project",
+        "📧 Check emails",
+        "☕ Take a break",
+        "📚 Read 10 pages of a book",
+        "🧺 Do laundry",
+        "🍽 Cook dinner",
+        "💤 Go to bed before 11 PM",
+      ];
+      const tasklist = document.getElementById("tasklist"); // Clear the old list first
+      const taskinput = document.getElementById("taskinput");
+      const taskform = document.getElementById("taskform");
+      const editModal = document.getElementById("editModal");
+      const editInput = document.getElementById("editInput");
+      const cancelbtn = document.getElementById("cancelbtn");
+      const savebtn = document.getElementById("savebtn");
+      let currentEditIndex = null;
+      // Create a list item for each task
+      function rendertask() {
+        tasklist.innerHTML = "";
+        tasks.forEach((task, index) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex justify-between items-center p-2 rounded-md bg-white ";
+          // Create a span to hold the task text
+          const span = document.createElement("span");
+          span.textContent = task;
+          span.className = "task-text ";
+
+          //create a button to for Edit task
+          const button = document.createElement("button");
+          button.textContent = "Edit";
+          button.className = "bg-green-500 px-4 py-2 rounded-md  ";
+          button.onclick = () => openEditModal(index);
+          //create a button for Delete the task
+          const deltbut = document.createElement("button");
+          deltbut.textContent = "Delete";
+          deltbut.className = "bg-red-400 p-2 rounded-md ";
+          deltbut.onclick = () => {
+            tasks.splice(index, 1);
+            rendertask();
+          };
+          //flex container for edit/delete button
+          const actionwaper = document.createElement("div");
+          actionwaper.class = "flex  gap-4";
+          actionwaper.appendChild(button);
+          actionwaper.appendChild(deltbut);
+          li.appendChild(span);
+          li.appendChild(actionwaper);
+          tasklist.appendChild(li);
+        });
+      }
+      //open modal with task value
+      function openEditModal(index) {
+        currentEditIndex = index;
+        editInput.value = tasks[index];
+        editModal.classList.remove("hidden");
+      }
+      //close modal
+      function closeModal() {
+        editModal.classList.add("hidden");
+        currentEditIndex = null;
+      }
+      //save the current task
+      savebtn.onclick = () => {
+        const newValue = editInput.value.trim();
+        if (newValue !== "" && newValue !== null) {
+          tasks[currentEditIndex] = newValue;
+          rendertask();
+          closeModal();
+        }
+      };
+      //cancel editing
+      cancelbtn.onclick = () => {
+        closeModal();
+      };
+      //add task
+      taskform.onsubmit = (e) => {
+        e.preventDefault();
+        const newtask = taskinput.value.trim();
+        if (newtask != "") {
+          tasks.push(newtask);
+          taskinput.value = "";
+          rendertask();
+        }
+      };
+      rendertask();
+    </script>
+  </body>
+</html>
